@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>פוסט חדש</title>
+</head>
+<body>
+    <h2>פוסט חדש</h2>
+    <form method="post">
+        <label>כותרת:</label><br>
+        <input type="text" name="title" required><br>
+        <label>תוכן:</label><br>
+        <textarea name="content" required></textarea><br>
+        <button type="submit">פרסם</button>
+    </form>
+    <a href="{{ url_for('dashboard') }}">חזרה לדשבורד</a>
+</body>
+</html> 

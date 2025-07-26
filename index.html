@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JudoNutrition - מערכת ליווי תזונתי</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            direction: rtl;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1a237e 0%, #26a69a 100%);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .logo {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .role-btn {
+            display: block;
+            width: 100%;
+            padding: 20px;
+            margin: 15px 0;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 2px solid #1a237e;
+            color: #1a237e;
+            text-decoration: none;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .role-btn:hover {
+            background: linear-gradient(135deg, #1a237e 0%, #26a69a 100%);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(26, 35, 126, 0.4);
+        }
+        
+        .emoji {
+            font-size: 24px;
+            margin-left: 10px;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .demo-info {
+            background: #e3f2fd;
+            color: #1565c0;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🥋</div>
+            <div class="title">JudoNutrition</div>
+            <div class="subtitle">מערכת ליווי תזונתי לספורטאי ג'ודו</div>
+        </div>
+        
+        <div class="content">
+            <div class="demo-info">
+                🚀 <strong>האפליקציה עובדת!</strong><br>
+                זו גרסת Demo - האפליקציה הורצה בהצלחה בקורסור
+            </div>
+            
+            <a href="#" class="role-btn" onclick="selectRole('athlete')">
+                <span class="emoji">🥋</span>
+                אני ספורטאי/ת
+            </a>
+            
+            <a href="#" class="role-btn" onclick="selectRole('nutritionist')">
+                <span class="emoji">👩‍⚕️</span>
+                אני תזונאי/ת
+            </a>
+            
+            <div id="success" class="success">
+                ✅ האפליקציה פועלת בהצלחה! 
+                <br>בגרסה המלאה יהיו כל התכונות.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function selectRole(role) {
+            const successDiv = document.getElementById('success');
+            successDiv.style.display = 'block';
+            successDiv.innerHTML = `
+                ✅ בחרת: ${role === 'athlete' ? 'ספורטאי' : 'תזונאי'}!<br>
+                🎉 האפליקציה עובדת מצוין בקורסור!<br>
+                🔧 המשך בפיתוח...
+            `;
+        }
+        
+        console.log('🥋 JudoNutrition Demo loaded successfully!');
+    </script>
+</body>
+</html>

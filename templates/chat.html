@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>צ'אט עם {{ other_username }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>💬 צ'אט עם {{ other_username }}</h2>
+            <a href="{{ url_for('dashboard') }}" class="back-btn">← חזרה לדשבורד</a>
+        </div>
+        
+        <div class="messages-container" id="messagesContainer">
+            <!-- הודעות יטענו כאן -->
+        </div>
+        
+        <div class="message-input-container">
+            <input type="text" id="messageInput" placeholder="כתוב הודעה..." maxlength="500">
+            <button onclick="sendMessage()" id="sendBtn">שלח</button>
+        </div>
+    </div>
+    
+    <script>
+        const currentUserId = {{ current_user_id }};
+        const otherUserId = {{ other_user_id }};
+        const currentUsername = "{{ current_username }}";
+        const otherUsername = "{{ other_username }}";
+    </script>
+    <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+</body>
+</html> 

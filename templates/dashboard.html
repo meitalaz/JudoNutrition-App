@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>הדשבורד שלי</title>
+</head>
+<body>
+    <h2>הדשבורד שלי</h2>
+    <a href="{{ url_for('new_post') }}">+ פוסט חדש</a> |
+    <a href="#" onclick="showUsersList()">💬 צ'אט</a> |
+    <a href="{{ url_for('logout') }}">התנתק</a>
+    <hr>
+    <h3>הפוסטים שלי:</h3>
+    {% if posts %}
+        <ul>
+        {% for post in posts %}
+            <li><strong>{{ post['title'] }}</strong><br>{{ post['content'] }}<br><small>{{ post['created_at'] }}</small></li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>אין פוסטים עדיין.</p>
+    {% endif %}
+    
+    <!-- Users list for chat -->
+    <div id="usersList" style="display: none; margin-top: 20px;">
+        <h3>בחר משתמש לצ'אט:</h3>
+        <div id="usersContainer"></div>
+    </div>
+</body>
+<script>
+function showUsersList() {
+    fetch('/users')
+        .then(response => response.json())
+        .then(users => {
+            const container = document.getElementById('usersContainer');
+            container.innerHTML = '';
+            users.forEach(user => {
+                const link = document.createElement('a');
+                link.href = `/chat/${user.id}`;
+                link.textContent = user.username;
+                link.style.display = 'block';
+                link.style.margin = '5px 0';
+                link.style.padding = '10px';
+                link.style.backgroundColor = '#f0f0f0';
+                link.style.textDecoration = 'none';
+                link.style.borderRadius = '5px';
+                container.appendChild(link);
+            });
+            document.getElementById('usersList').style.display = 'block';
+        })
+        .catch(error => console.error('Error:', error));
+}
+</script>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JudoNutrition - מערכת ליווי תזונתי</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🥋</div>
+            <div class="title">JudoNutrition</div>
+            <div class="subtitle">מערכת ליווי תזונתי לספורטאי ג'ודו</div>
+        </div>
+        
+        <div class="content">
+            <div class="demo-info">
+                🚀 <strong>האפליקציה עובדת!</strong><br>
+                זו גרסת Flask - האפליקציה הורצה בהצלחה
+            </div>
+            
+            <a href="#" class="role-btn" onclick="selectRole('athlete')">
+                <span class="emoji">🥋</span>
+                אני ספורטאי/ת
+            </a>
+            
+            <a href="#" class="role-btn" onclick="selectRole('nutritionist')">
+                <span class="emoji">👩‍⚕️</span>
+                אני תזונאי/ת
+            </a>
+            
+            <div id="success" class="success">
+                ✅ האפליקציה פועלת בהצלחה! 
+                <br>בגרסה המלאה יהיו כל התכונות.
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

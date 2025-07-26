@@ -1,0 +1,468 @@
+{% extends "base.html" %}
+
+{% block title %}ניהול ספורטאים - JudoNutrition Pro{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dark-theme.css') }}">
+{% endblock %}
+
+{% block content %}
+<!-- כפתור זמני לבדיקות - להסיר בגרסה סופית -->
+<button onclick="window.location.href='/'" style="position: fixed; top: 10px; left: 10px; padding: 8px 12px; background: rgba(255,202,40,0.95); border: 1px solid #FFCA28; border-radius: 6px; font-size: 13px; cursor: pointer; z-index: 9999; color: #333333; font-weight: 600; box-shadow: 0 4px 12px rgba(255,202,40,0.4);">
+    🔄 החלפת תפקיד
+</button>
+
+<div class="nutritionist-athletes">
+    <!-- Top Navigation -->
+    <nav class="dashboard-nav">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="dashboard-brand">
+                        <h2 class="mb-0">
+                            <i class="fas fa-users me-2 text-primary"></i>
+                            ניהול ספורטאים
+                        </h2>
+                    </div>
+                </div>
+                <div class="col-md-6 text-end">
+                    <div class="nav-actions">
+                        <button class="btn btn-outline-secondary me-2" onclick="window.location.href='/nutritionist/dashboard'">
+                            <i class="fas fa-arrow-right me-1"></i>
+                            חזרה לדשבורד
+                        </button>
+                        <button class="btn btn-outline-primary" onclick="window.location.href='/'">
+                            <i class="fas fa-home me-1"></i>
+                            חזרה לכניסה
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <!-- Filters and Search -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <div class="search-filters d-flex gap-3 align-items-center flex-wrap">
+                    <div class="search-box">
+                        <input type="text" id="athleteSearch" class="form-control" placeholder="חיפוש לפי שם...">
+                        <i class="fas fa-search search-icon"></i>
+                    </div>
+                    <select id="statusFilter" class="form-select" style="width: auto;">
+                        <option value="">כל הסטטוסים</option>
+                        <option value="good">תקין</option>
+                        <option value="warning">זהירות</option>
+                        <option value="danger">דחוף</option>
+                    </select>
+                    <select id="categoryFilter" class="form-select" style="width: auto;">
+                        <option value="">כל הקטגוריות</option>
+                        <option value="נשים">נשים</option>
+                        <option value="גברים">גברים</option>
+                    </select>
+                    <select id="competitionFilter" class="form-select" style="width: auto;">
+                        <option value="">כל התחרויות</option>
+                        <option value="7">תוך 7 ימים</option>
+                        <option value="14">תוך 14 יום</option>
+                        <option value="30">תוך 30 יום</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4 text-end">
+                <div class="athletes-stats">
+                    <span class="stat-item">
+                        <i class="fas fa-users text-primary"></i>
+                        סה"כ: <strong id="totalCount">{{ athletes|length }}</strong>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Athletes Grid -->
+        <div class="row" id="athletesGrid">
+            {% for athlete in athletes %}
+            <div class="col-lg-4 col-md-6 mb-4 athlete-card-container" 
+                 data-name="{{ athlete.name }}" 
+                 data-status="{{ athlete.status }}"
+                 data-category="{{ athlete.category }}"
+                 data-competition="{{ athlete.days_to_competition }}">
+                <div class="athlete-card status-{{ athlete.status }}">
+                    <div class="athlete-header">
+                        <div class="athlete-avatar">
+                            <i class="fas fa-user-circle fa-3x"></i>
+                        </div>
+                        <div class="athlete-basic-info">
+                            <h4 class="athlete-name">{{ athlete.name }}</h4>
+                            <p class="athlete-category">{{ athlete.category }}</p>
+                            <span class="status-badge status-{{ athlete.status }}">
+                                <i class="fas fa-circle"></i>
+                                {% if athlete.status == 'good' %}תקין
+                                {% elif athlete.status == 'warning' %}זהירות
+                                {% else %}דחוף
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="athlete-metrics">
+                        <div class="metric-row">
+                            <div class="metric">
+                                <span class="metric-label">משקל נוכחי</span>
+                                <span class="metric-value">{{ athlete.current_weight }} ק"ג</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">יעד</span>
+                                <span class="metric-value">{{ athlete.target_weight }} ק"ג</span>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric">
+                                <span class="metric-label">ימים לתחרות</span>
+                                <span class="metric-value text-{{ 'danger' if athlete.days_to_competition <= 7 else 'warning' if athlete.days_to_competition <= 14 else 'primary' }}">
+                                    {{ athlete.days_to_competition }}
+                                </span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">עדכון אחרון</span>
+                                <span class="metric-value">{{ athlete.last_update }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="athlete-progress">
+                        <div class="progress-info">
+                            <span>התקדמות למטרה</span>
+                            {% set progress = ((athlete.target_weight / athlete.current_weight) * 100) | round %}
+                            <span>{{ progress }}%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-{{ 'success' if progress >= 90 else 'warning' if progress >= 70 else 'danger' }}" 
+                                 style="width: {{ progress }}%"></div>
+                        </div>
+                    </div>
+
+                    <div class="athlete-contact">
+                        <small class="text-muted d-block">{{ athlete.phone }}</small>
+                        <small class="text-muted">{{ athlete.email }}</small>
+                    </div>
+
+                    <div class="athlete-actions">
+                        <button class="btn btn-primary btn-sm" onclick="viewAthleteProfile({{ athlete.id }})">
+                            <i class="fas fa-eye me-1"></i>
+                            פרופיל
+                        </button>
+                        <button class="btn btn-outline-primary btn-sm" onclick="sendMessage({{ athlete.id }})">
+                            <i class="fas fa-message me-1"></i>
+                            הודעה
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="viewAnalysis({{ athlete.id }})">
+                            <i class="fas fa-chart-line me-1"></i>
+                            ניתוח
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- No Results Message -->
+        <div id="noResults" class="text-center py-5" style="display: none;">
+            <i class="fas fa-search fa-3x text-muted mb-3"></i>
+            <h4>לא נמצאו תוצאות</h4>
+            <p class="text-muted">נסה לשנות את מסנני החיפוש</p>
+        </div>
+    </div>
+</div>
+
+<style>
+.nutritionist-athletes {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    padding-top: 2rem;
+}
+
+.dashboard-nav {
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+    padding: 1rem 0;
+}
+
+.dashboard-brand h2 {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.search-filters {
+    background: white;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.search-box {
+    position: relative;
+    min-width: 250px;
+}
+
+.search-box input {
+    padding-left: 2.5rem;
+}
+
+.search-icon {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+}
+
+.athletes-stats {
+    background: white;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.stat-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.athlete-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    height: 100%;
+}
+
+.athlete-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.athlete-card.status-good {
+    border-color: #28a745;
+    border-width: 2px 2px 2px 6px;
+}
+
+.athlete-card.status-warning {
+    border-color: #ffc107;
+    border-width: 2px 2px 2px 6px;
+}
+
+.athlete-card.status-danger {
+    border-color: #dc3545;
+    border-width: 2px 2px 2px 6px;
+}
+
+.athlete-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    gap: 1rem;
+}
+
+.athlete-avatar {
+    color: var(--primary-color);
+    opacity: 0.8;
+}
+
+.athlete-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: var(--primary-color);
+}
+
+.athlete-category {
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+}
+
+.status-badge.status-good {
+    background-color: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+}
+
+.status-badge.status-warning {
+    background-color: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+}
+
+.status-badge.status-danger {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+.athlete-metrics {
+    margin-bottom: 1rem;
+}
+
+.metric-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+}
+
+.metric {
+    text-align: center;
+    flex: 1;
+}
+
+.metric-label {
+    display: block;
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-bottom: 0.25rem;
+}
+
+.metric-value {
+    display: block;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.athlete-progress {
+    margin-bottom: 1rem;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+}
+
+.progress {
+    height: 6px;
+    border-radius: 3px;
+}
+
+.athlete-contact {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.athlete-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.athlete-actions .btn-sm {
+    flex: 1;
+    min-width: 80px;
+}
+
+@media (max-width: 768px) {
+    .search-filters {
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+    
+    .search-box {
+        min-width: auto;
+        margin-bottom: 1rem;
+    }
+    
+    .nav-actions .btn {
+        font-size: 0.875rem;
+        padding: 0.375rem 0.75rem;
+    }
+    
+    .athlete-actions {
+        flex-direction: column;
+    }
+    
+    .athlete-actions .btn-sm {
+        min-width: auto;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Search and filter functionality
+    const searchInput = document.getElementById('athleteSearch');
+    const statusFilter = document.getElementById('statusFilter');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const competitionFilter = document.getElementById('competitionFilter');
+    const athleteCards = document.querySelectorAll('.athlete-card-container');
+    const totalCount = document.getElementById('totalCount');
+    const noResults = document.getElementById('noResults');
+
+    function filterAthletes() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const statusValue = statusFilter.value;
+        const categoryValue = categoryFilter.value;
+        const competitionValue = competitionFilter.value;
+        let visibleCount = 0;
+
+        athleteCards.forEach(card => {
+            const name = card.dataset.name.toLowerCase();
+            const status = card.dataset.status;
+            const category = card.dataset.category;
+            const competition = parseInt(card.dataset.competition);
+
+            let show = true;
+
+            // Apply filters
+            if (searchTerm && !name.includes(searchTerm)) show = false;
+            if (statusValue && status !== statusValue) show = false;
+            if (categoryValue && !category.includes(categoryValue)) show = false;
+            if (competitionValue) {
+                const days = parseInt(competitionValue);
+                if (competition > days) show = false;
+            }
+
+            card.style.display = show ? 'block' : 'none';
+            if (show) visibleCount++;
+        });
+
+        totalCount.textContent = visibleCount;
+        noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+
+    // Add event listeners
+    searchInput.addEventListener('input', filterAthletes);
+    statusFilter.addEventListener('change', filterAthletes);
+    categoryFilter.addEventListener('change', filterAthletes);
+    competitionFilter.addEventListener('change', filterAthletes);
+});
+
+// Action functions
+function viewAthleteProfile(athleteId) {
+    alert(`פתיחת פרופיל ספורטאי מספר ${athleteId}`);
+    // Here you would redirect to athlete profile page
+}
+
+function sendMessage(athleteId) {
+    alert(`שליחת הודעה לספורטאי מספר ${athleteId}`);
+    // Here you would open messaging interface
+}
+
+function viewAnalysis(athleteId) {
+    alert(`צפייה בניתוח נתונים לספורטאי מספר ${athleteId}`);
+    // Here you would redirect to analysis page
+}
+</script>
+{% endblock %}

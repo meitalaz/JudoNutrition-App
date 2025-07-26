@@ -1,0 +1,405 @@
+{% extends "base.html" %}
+
+{% block title %}לוח בקרה מקצועי - JudoNutrition Pro{% endblock %}
+
+{% block head %}
+<!-- Custom CSS for Nutritionist Dashboard -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dark-theme.css') }}">
+{% endblock %}
+
+{% block content %}
+<!-- כפתור זמני לבדיקות - להסיר בגרסה סופית -->
+<button onclick="window.location.href='/'" style="position: fixed; top: 10px; left: 10px; padding: 8px 12px; background: rgba(255,202,40,0.95); border: 1px solid #FFCA28; border-radius: 6px; font-size: 13px; cursor: pointer; z-index: 9999; color: #333333; font-weight: 600; box-shadow: 0 4px 12px rgba(255,202,40,0.4);">
+    🔄 החלפת תפקיד
+</button>
+
+<div class="nutritionist-dashboard">
+    <!-- Top Navigation -->
+    <nav class="dashboard-nav">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-4">
+                    <div class="dashboard-brand">
+                        <h2 class="mb-0">
+                            <i class="fas fa-user-md me-2 text-primary"></i>
+                            לוח בקרה תזונאית
+                        </h2>
+                    </div>
+                </div>
+                <div class="col-md-4 text-center">
+                    <div class="nav-actions">
+                        <button class="btn btn-primary me-2" onclick="window.location.href='/nutritionist/chat'">
+                            <i class="fas fa-comments me-1"></i>
+                            מרכז הודעות
+                        </button>
+                        <button class="btn btn-outline-primary me-2" onclick="window.location.href='/nutritionist/athletes'">
+                            <i class="fas fa-users me-1"></i>
+                            ספורטאים
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="window.location.href='/'">
+                            <i class="fas fa-home me-1"></i>
+                            חזרה לכניסה
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="dashboard-time">
+                        <small class="text-muted">עדכון אחרון:</small>
+                        <span class="fw-bold" id="last-update-time">עכשיו</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <!-- Main Metrics -->
+        <div class="row mb-4">
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3 class="metric-number">{{ total_athletes }}</h3>
+                        <p class="metric-label">ספורטאים פעילים</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="metric-card alert-danger">
+                    <div class="metric-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3 class="metric-number text-danger">{{ urgent_alerts }}</h3>
+                        <p class="metric-label">התראות דחופות</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3 class="metric-number text-success">{{ compliance_rate }}%</h3>
+                        <p class="metric-label">ציות לתוכנית</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3 class="metric-number">85%</h3>
+                        <p class="metric-label">השלמת שקילות</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Urgent Alerts -->
+            <div class="col-lg-6 mb-4">
+                <div class="card alerts-card">
+                    <div class="card-header bg-danger text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-bell me-2"></i>
+                            התראות דחופות
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        {% if urgent_alerts_list %}
+                            {% for alert in urgent_alerts_list %}
+                            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                                <i class="fas fa-exclamation-circle me-3"></i>
+                                <div class="flex-grow-1">
+                                    <strong>{{ alert.athlete }}</strong><br>
+                                    {{ alert.message }}
+                                </div>
+                                <small class="text-muted">{{ alert.time }}</small>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-center text-success py-3">
+                                <i class="fas fa-check-circle fa-2x mb-2"></i>
+                                <p>אין התראות דחופות כרגע</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Regular Alerts -->
+            <div class="col-lg-6 mb-4">
+                <div class="card alerts-card">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0">
+                            <i class="fas fa-info-circle me-2"></i>
+                            התראות רגילות
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        {% for alert in regular_alerts_list %}
+                        <div class="alert alert-{{ 'warning' if alert.type == 'warning' else 'info' }} d-flex align-items-center" role="alert">
+                            <i class="fas fa-{{ 'exclamation-triangle' if alert.type == 'warning' else 'info-circle' }} me-3"></i>
+                            <div class="flex-grow-1">
+                                <strong>{{ alert.athlete }}</strong><br>
+                                {{ alert.message }}
+                            </div>
+                            <small class="text-muted">{{ alert.time }}</small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Athletes Overview -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-users me-2"></i>
+                            ספורטאים - תצוגה מהירה
+                        </h5>
+                        <a href="/nutritionist/athletes" class="btn btn-primary btn-sm">
+                            <i class="fas fa-eye me-1"></i>
+                            צפייה מלאה
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>שם</th>
+                                        <th>משקל נוכחי</th>
+                                        <th>קטגוריה</th>
+                                        <th>ימים לתחרות</th>
+                                        <th>סטטוס</th>
+                                        <th>עדכון אחרון</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for athlete in athletes %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ athlete.name }}</strong>
+                                        </td>
+                                        <td>{{ athlete.current_weight }} ק"ג</td>
+                                        <td>{{ athlete.category }}</td>
+                                        <td>
+                                            <span class="badge bg-{{ 'danger' if athlete.days_to_competition <= 7 else 'warning' if athlete.days_to_competition <= 14 else 'secondary' }}">
+                                                {{ athlete.days_to_competition }} ימים
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="status-indicator status-{{ athlete.status }}">
+                                                <i class="fas fa-circle"></i>
+                                                {% if athlete.status == 'good' %}תקין
+                                                {% elif athlete.status == 'warning' %}זהירות
+                                                {% else %}דחוף
+                                                {% endif %}
+                                            </span>
+                                        </td>
+                                        <td>{{ athlete.last_update }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Weekly Activity Chart -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-chart-bar me-2"></i>
+                            פעילות שבועית
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="weeklyActivityChart" height="100"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.nutritionist-dashboard {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    padding-top: 2rem;
+}
+
+.dashboard-nav {
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+    padding: 1rem 0;
+}
+
+.dashboard-brand h2 {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.dashboard-time {
+    font-size: 0.9rem;
+}
+
+.metric-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    transition: transform 0.2s;
+}
+
+.metric-card:hover {
+    transform: translateY(-2px);
+}
+
+.metric-card.alert-danger {
+    border-right: 4px solid #dc3545;
+}
+
+.metric-icon {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-left: 1rem;
+}
+
+.metric-card.alert-danger .metric-icon {
+    color: #dc3545;
+}
+
+.metric-number {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.metric-label {
+    color: #6c757d;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.alerts-card .card-header {
+    font-weight: 600;
+}
+
+.status-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+}
+
+.status-good { color: #28a745; }
+.status-warning { color: #ffc107; }
+.status-danger { color: #dc3545; }
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+    background-color: #f8f9fa;
+}
+
+.nav-actions .btn {
+    margin: 0 0.25rem;
+}
+
+@media (max-width: 768px) {
+    .dashboard-nav .row > div {
+        text-align: center !important;
+        margin-bottom: 1rem;
+    }
+    
+    .nav-actions .btn {
+        font-size: 0.875rem;
+        padding: 0.375rem 0.75rem;
+    }
+    
+    .metric-card {
+        margin-bottom: 1rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Update time
+    function updateTime() {
+        const now = new Date();
+        const timeString = now.toLocaleString('he-IL', {
+            timeZone: 'Asia/Jerusalem',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        document.getElementById('last-update-time').textContent = timeString;
+    }
+    
+    updateTime();
+    setInterval(updateTime, 60000); // Update every minute
+    
+    // Initialize weekly activity chart
+    const ctx = document.getElementById('weeklyActivityChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'],
+            datasets: [{
+                label: 'השלמת שקילות',
+                data: [85, 90, 78, 92, 88, 75, 65],
+                backgroundColor: 'rgba(15, 76, 129, 0.8)',
+                borderColor: 'rgba(15, 76, 129, 1)',
+                borderWidth: 1
+            }, {
+                label: 'השלמת הערכות',
+                data: [70, 75, 68, 80, 72, 60, 45],
+                backgroundColor: 'rgba(255, 194, 14, 0.8)',
+                borderColor: 'rgba(255, 194, 14, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: {
+                        callback: function(value) {
+                            return value + '%';
+                        }
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

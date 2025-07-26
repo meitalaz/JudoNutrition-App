@@ -1,0 +1,180 @@
+{% extends "athlete_base.html" %}
+
+{% block title %}דף הבית - {{ app_name }}{% endblock %}
+
+{% block athlete_content %}
+
+
+<div class="athlete-home">
+    <!-- Status Overview -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card status-card">
+                <div class="card-body text-center">
+                    <h4 class="mb-3">היי {{ athlete_name or 'ספורטאי' }}! 👋</h4>
+                    <div class="status-circle mb-3">
+                        <div class="progress-ring">
+                            <div class="progress-fill" data-progress="75"></div>
+                        </div>
+                        <span class="status-text">בדרך ליעד</span>
+                    </div>
+                    <p class="text-muted">אתה 2.5 ק"ג ממשקל היעד לתחרות הבאה</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="row mb-4">
+        <div class="col-6">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-weight fa-2x text-primary mb-2"></i>
+                    <h5 class="card-title">משקל נוכחי</h5>
+                    <h3 class="text-primary">68.5 ק"ג</h3>
+                    <small class="text-success">↓ 0.3 מאתמול</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-target fa-2x text-secondary mb-2"></i>
+                    <h5 class="card-title">יעד</h5>
+                    <h3 class="text-secondary">66.0 ק"ג</h3>
+                    <small class="text-muted">עד 15/8</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Today's Tasks -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">
+                        <i class="fas fa-tasks me-2"></i>
+                        משימות היום
+                    </h6>
+                    <span class="badge bg-primary">3/5</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="task-list">
+                        <div class="task-item completed">
+                            <div class="task-check">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="task-content">
+                                <span>שקילה בוקר</span>
+                                <small class="text-muted">07:30</small>
+                            </div>
+                        </div>
+                        
+                        <div class="task-item completed">
+                            <div class="task-check">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="task-content">
+                                <span>ארוחת בוקר</span>
+                                <small class="text-muted">08:00</small>
+                            </div>
+                        </div>
+                        
+                        <div class="task-item completed">
+                            <div class="task-check">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="task-content">
+                                <span>אימון בוקר</span>
+                                <small class="text-muted">10:00</small>
+                            </div>
+                        </div>
+                        
+                        <div class="task-item pending">
+                            <div class="task-check">
+                                <i class="far fa-circle"></i>
+                            </div>
+                            <div class="task-content">
+                                <span>ארוחת צהריים</span>
+                                <small class="text-warning">12:30 - בקרוב</small>
+                            </div>
+                        </div>
+                        
+                        <div class="task-item pending">
+                            <div class="task-check">
+                                <i class="far fa-circle"></i>
+                            </div>
+                            <div class="task-content">
+                                <span>אימון ערב</span>
+                                <small class="text-muted">17:00</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Chart -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-chart-line me-2"></i>
+                        התקדמות השבוע
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="progress-chart">
+                        <canvas id="weekProgressChart" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-5">
+        <div class="col-6">
+            <button class="btn btn-primary w-100 quick-action-btn" onclick="switchToTab('weight')">
+                <i class="fas fa-weight fa-lg mb-2"></i>
+                <br>רישום משקל
+            </button>
+        </div>
+        <div class="col-6">
+            <button class="btn btn-outline-primary w-100 quick-action-btn" onclick="switchToTab('chat')">
+                <i class="fas fa-comments fa-lg mb-2"></i>
+                <br>צ'אט עם התזונאית
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block athlete_scripts %}
+<script>
+// Progress ring animation
+document.addEventListener('DOMContentLoaded', function() {
+    const progressRing = document.querySelector('.progress-fill');
+    if (progressRing) {
+        const progress = progressRing.getAttribute('data-progress');
+        progressRing.style.strokeDasharray = progress + ' ' + (100 - progress);
+    }
+    
+    // Initialize progress chart (placeholder for now)
+    initializeProgressChart();
+});
+
+function initializeProgressChart() {
+    const canvas = document.getElementById('weekProgressChart');
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        // Placeholder chart - will be replaced with real chart library
+        ctx.fillStyle = '#0F4C81';
+        ctx.fillText('גרף התקדמות - יוטמע בהמשך', 10, 100);
+    }
+}
+</script>
+{% endblock %}

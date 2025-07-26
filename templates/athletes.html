@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+
+{% block title %}ניהול ספורטאים - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Athletes Header -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h1 class="h3 fw-bold">
+                <i class="fas fa-users me-2"></i>
+                ניהול ספורטאים
+            </h1>
+            <p class="text-muted">רשימת כלל הספורטאים במערכת</p>
+        </div>
+        <div class="col-md-6 text-md-end">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAthleteModal">
+                <i class="fas fa-plus me-2"></i>
+                הוספת ספורטאי חדש
+            </button>
+        </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="input-group">
+                <span class="input-group-text">
+                    <i class="fas fa-search"></i>
+                </span>
+                <input type="text" class="form-control" placeholder="חיפוש לפי שם, אימייל או קטגוריה...">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <select class="form-select">
+                <option value="">כל הקטגוריות</option>
+                <option value="60">60 ק"ג</option>
+                <option value="66">66 ק"ג</option>
+                <option value="73">73 ק"ג</option>
+                <option value="81">81 ק"ג</option>
+                <option value="90">90 ק"ג</option>
+                <option value="100">100 ק"ג</option>
+                <option value="+100">מעל 100 ק"ג</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Athletes List -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-body">
+                    {% if athletes %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>שם</th>
+                                        <th>אימייל</th>
+                                        <th>טלפון</th>
+                                        <th>קטגוריית משקל</th>
+                                        <th>מין</th>
+                                        <th>תאריך הצטרפות</th>
+                                        <th>פעולות</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for athlete in athletes %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar me-3">
+                                                    <i class="fas fa-user-circle fa-2x text-primary"></i>
+                                                </div>
+                                                <div>
+                                                    <h6 class="mb-0">{{ athlete.first_name }} {{ athlete.last_name }}</h6>
+                                                    <small class="text-muted">ID: {{ athlete.id }}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>{{ athlete.email }}</td>
+                                        <td>{{ athlete.phone or 'לא צוין' }}</td>
+                                        <td>
+                                            {% if athlete.weight_category %}
+                                                <span class="badge bg-info">{{ athlete.weight_category }}</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">לא צוין</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ athlete.gender or 'לא צוין' }}</td>
+                                        <td>{{ athlete.created_at.strftime('%d/%m/%Y') }}</td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <button class="btn btn-outline-primary" title="צפייה בפרופיל">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-outline-success" title="מעקב תזונתי">
+                                                    <i class="fas fa-chart-line"></i>
+                                                </button>
+                                                <button class="btn btn-outline-warning" title="עריכה">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-users fa-4x text-muted mb-4"></i>
+                            <h4 class="text-muted">אין ספורטאים במערכת</h4>
+                            <p class="text-muted">התחילי בהוספת הספורטאי הראשון</p>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAthleteModal">
+                                <i class="fas fa-plus me-2"></i>
+                                הוספת ספורטאי ראשון
+                            </button>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Athlete Modal -->
+<div class="modal fade" id="addAthleteModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">הוספת ספורטאי חדש</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addAthleteForm">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="firstName" class="form-label">שם פרטי *</label>
+                            <input type="text" class="form-control" id="firstName" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="lastName" class="form-label">שם משפחה *</label>
+                            <input type="text" class="form-control" id="lastName" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">אימייל *</label>
+                            <input type="email" class="form-control" id="email" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="phone" class="form-label">טלפון</label>
+                            <input type="tel" class="form-control" id="phone">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="birthDate" class="form-label">תאריך לידה</label>
+                            <input type="date" class="form-control" id="birthDate">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="gender" class="form-label">מין</label>
+                            <select class="form-select" id="gender">
+                                <option value="">בחר מין</option>
+                                <option value="זכר">זכר</option>
+                                <option value="נקבה">נקבה</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="weightCategory" class="form-label">קטגוריית משקל</label>
+                            <select class="form-select" id="weightCategory">
+                                <option value="">בחר קטגוריה</option>
+                                <option value="60">60 ק"ג</option>
+                                <option value="66">66 ק"ג</option>
+                                <option value="73">73 ק"ג</option>
+                                <option value="81">81 ק"ג</option>
+                                <option value="90">90 ק"ג</option>
+                                <option value="100">100 ק"ג</option>
+                                <option value="+100">מעל 100 ק"ג</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ביטול</button>
+                <button type="submit" class="btn btn-primary" form="addAthleteForm">
+                    <i class="fas fa-save me-2"></i>
+                    שמירה
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

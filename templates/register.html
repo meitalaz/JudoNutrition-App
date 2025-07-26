@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>הרשמה</title>
+</head>
+<body>
+    <h2>הרשמה</h2>
+    <form method="post">
+        <label>שם משתמש:</label><br>
+        <input type="text" name="username" required><br>
+        <label>אימייל:</label><br>
+        <input type="email" name="email" required><br>
+        <label>סיסמה:</label><br>
+        <input type="password" name="password" required><br>
+        <button type="submit">הרשם</button>
+    </form>
+    <a href="{{ url_for('login') }}">כבר רשום? התחבר</a>
+</body>
+</html> 

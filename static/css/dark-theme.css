@@ -1,0 +1,301 @@
+/* ===== PROFESSIONAL THEME - ORIGINAL COLOR PALETTE ===== */
+:root {
+    /* Professional Blue Colors */
+    --primary-blue: #0F4C81;
+    --secondary-blue: #0077C8;
+    --accent-yellow: #FFC20E;
+    --background-light: #F4F4F4;
+    --text-dark: #333333;
+    --border-light: #E0E0E0;
+    
+    /* Status Colors */
+    --success: #28a745;
+    --warning: #FFC20E;
+    --danger: #dc3545;
+    --info: #0077C8;
+    
+    /* Text Colors */
+    --text-primary: #333333;
+    --text-secondary: #6c757d;
+    --text-light: #ffffff;
+    
+    /* Interactive Elements */
+    --hover-primary: #0a3a66;
+    --hover-secondary: #005ba3;
+    --focus-shadow: rgba(15, 76, 129, 0.25);
+    
+    /* Gradients */
+    --gradient-header: linear-gradient(135deg, #0F4C81 0%, #0077C8 100%);
+    --gradient-card: linear-gradient(145deg, #ffffff 0%, #F4F4F4 100%);
+    --gradient-primary: linear-gradient(135deg, #0F4C81 0%, #0077C8 100%);
+}
+
+/* ===== GLOBAL OVERRIDES ===== */
+body {
+    background-color: var(--background-light) !important;
+    color: var(--text-primary) !important;
+}
+
+/* ===== CARDS & CONTAINERS ===== */
+.card {
+    background: var(--gradient-card) !important;
+    border: 1px solid rgba(129, 212, 250, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+    color: var(--text-primary) !important;
+}
+
+.card-header {
+    background: var(--gradient-header) !important;
+    border-bottom: 1px solid rgba(129, 212, 250, 0.2) !important;
+    color: var(--text-primary) !important;
+}
+
+.card-body {
+    color: var(--text-primary) !important;
+}
+
+/* ===== BUTTONS ===== */
+.btn-primary {
+    background: var(--primary-blue) !important;
+    border-color: var(--primary-blue) !important;
+    color: white !important;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background: var(--hover-primary) !important;
+    border-color: var(--hover-primary) !important;
+    box-shadow: 0 0 0 0.2rem var(--focus-shadow) !important;
+}
+
+.btn-danger, .btn-action {
+    background: var(--danger) !important;
+    border-color: var(--danger) !important;
+    color: white !important;
+}
+
+.btn-danger:hover, .btn-action:hover {
+    background: #c82333 !important;
+    border-color: #bd2130 !important;
+}
+
+.btn-secondary {
+    background: var(--secondary-blue) !important;
+    border-color: var(--secondary-blue) !important;
+    color: white !important;
+}
+
+.btn-warning {
+    background: var(--accent-yellow) !important;
+    border-color: var(--accent-yellow) !important;
+    color: var(--text-primary) !important;
+}
+
+/* ===== HEADERS & NAVIGATION ===== */
+.navbar, .header, .athlete-header, .nutritionist-header {
+    background: var(--gradient-header) !important;
+    border-bottom: 2px solid var(--turquoise) !important;
+}
+
+.navbar-brand, .header h1, .header h2, .header h3, .header h4, .header h5 {
+    color: var(--text-primary) !important;
+}
+
+/* ===== PROGRESS BARS ===== */
+.progress {
+    background-color: rgba(129, 212, 250, 0.2) !important;
+}
+
+.progress-bar {
+    background: var(--gradient-turquoise) !important;
+}
+
+/* ===== STATISTICS & INFO ===== */
+.stat-card .card-body {
+    background: var(--gradient-card) !important;
+}
+
+.stat-value {
+    color: var(--turquoise) !important;
+    font-weight: 700;
+}
+
+.stat-label {
+    color: var(--text-secondary) !important;
+}
+
+/* ===== FORMS ===== */
+.form-control {
+    background-color: rgba(64, 64, 64, 0.8) !important;
+    border: 1px solid rgba(129, 212, 250, 0.3) !important;
+    color: var(--text-primary) !important;
+}
+
+.form-control:focus {
+    background-color: rgba(64, 64, 64, 1) !important;
+    border-color: var(--turquoise) !important;
+    box-shadow: 0 0 0 0.2rem var(--focus-shadow) !important;
+    color: var(--text-primary) !important;
+}
+
+.form-label {
+    color: var(--text-primary) !important;
+}
+
+.form-select {
+    background-color: rgba(64, 64, 64, 0.8) !important;
+    border: 1px solid rgba(129, 212, 250, 0.3) !important;
+    color: var(--text-primary) !important;
+}
+
+/* ===== ALERTS ===== */
+.alert-success {
+    background-color: rgba(0, 191, 165, 0.2) !important;
+    border-color: var(--turquoise) !important;
+    color: var(--text-primary) !important;
+}
+
+.alert-warning {
+    background-color: rgba(255, 202, 40, 0.2) !important;
+    border-color: var(--accent-yellow) !important;
+    color: var(--text-primary) !important;
+}
+
+.alert-danger {
+    background-color: rgba(198, 40, 40, 0.2) !important;
+    border-color: var(--action-red) !important;
+    color: var(--text-primary) !important;
+}
+
+.alert-info {
+    background-color: rgba(129, 212, 250, 0.2) !important;
+    border-color: var(--light-blue) !important;
+    color: var(--text-primary) !important;
+}
+
+/* ===== BADGES ===== */
+.badge {
+    background: var(--turquoise) !important;
+    color: white !important;
+}
+
+.badge.bg-warning {
+    background: var(--accent-yellow) !important;
+    color: var(--text-dark) !important;
+}
+
+.badge.bg-danger {
+    background: var(--action-red) !important;
+    color: white !important;
+}
+
+/* ===== TABLE STYLING ===== */
+.table {
+    color: var(--text-primary) !important;
+}
+
+.table th {
+    background: var(--gradient-header) !important;
+    border-color: rgba(129, 212, 250, 0.3) !important;
+    color: var(--text-primary) !important;
+}
+
+.table td {
+    border-color: rgba(129, 212, 250, 0.2) !important;
+    color: var(--text-primary) !important;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(64, 64, 64, 0.3) !important;
+}
+
+/* ===== DROPDOWN MENUS ===== */
+.dropdown-menu {
+    background-color: var(--dark-background) !important;
+    border: 1px solid rgba(129, 212, 250, 0.3) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+.dropdown-item {
+    color: var(--text-primary) !important;
+}
+
+.dropdown-item:hover, .dropdown-item:focus {
+    background-color: var(--turquoise) !important;
+    color: white !important;
+}
+
+/* ===== TEXT COLORS ===== */
+.text-primary {
+    color: var(--turquoise) !important;
+}
+
+.text-secondary {
+    color: var(--text-secondary) !important;
+}
+
+.text-success {
+    color: var(--success) !important;
+}
+
+.text-warning {
+    color: var(--warning) !important;
+}
+
+.text-danger {
+    color: var(--danger) !important;
+}
+
+.text-info {
+    color: var(--info) !important;
+}
+
+.text-muted {
+    color: var(--text-secondary) !important;
+}
+
+/* ===== BACKGROUND COLORS ===== */
+.bg-primary {
+    background-color: var(--turquoise) !important;
+}
+
+.bg-secondary {
+    background-color: var(--light-blue) !important;
+}
+
+.bg-success {
+    background-color: var(--success) !important;
+}
+
+.bg-warning {
+    background-color: var(--warning) !important;
+}
+
+.bg-danger {
+    background-color: var(--danger) !important;
+}
+
+.bg-info {
+    background-color: var(--info) !important;
+}
+
+/* ===== BORDERS ===== */
+.border-primary {
+    border-color: var(--turquoise) !important;
+}
+
+.border-secondary {
+    border-color: var(--light-blue) !important;
+}
+
+/* ===== CUSTOM GRADIENTS ===== */
+.gradient-bg {
+    background: var(--gradient-header) !important;
+}
+
+.gradient-card {
+    background: var(--gradient-card) !important;
+}
+
+.gradient-turquoise {
+    background: var(--gradient-turquoise) !important;
+}

@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}מרכז הודעות מתקדם - JudoNutrition{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/nutritionist_chat.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dark-theme.css') }}">
+{% endblock %}
+
+{% block content %}
+<!-- כפתור זמני לבדיקות - להסיר בגרסה סופית -->
+<button onclick="window.location.href='/'" style="position: fixed; top: 10px; left: 10px; padding: 8px 12px; background: rgba(255,202,40,0.95); border: 1px solid #FFCA28; border-radius: 6px; font-size: 13px; cursor: pointer; z-index: 9999; color: #333333; font-weight: 600; box-shadow: 0 4px 12px rgba(255,202,40,0.4);">
+    🔄 החלפת תפקיד
+</button>
+
+<div class="container-fluid p-0">
+    <!-- Navigation Breadcrumb -->
+    <nav aria-label="breadcrumb" class="bg-light p-3">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="{{ url_for('nutritionist_dashboard') }}">ראשי</a></li>
+            <li class="breadcrumb-item active" aria-current="page">מרכז הודעות</li>
+        </ol>
+    </nav>
+
+    <!-- Main Chat Interface -->
+    <div id="nutritionistChatContainer" class="chat-main-container">
+        <!-- Content will be loaded by JavaScript -->
+    </div>
+</div>
+
+<!-- Quick Action Modals -->
+<div class="modal fade" id="urgentModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">סמן כדחוף</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>האם אתה בטוח שברצונך לסמן הודעות אלה כדחופות?</p>
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    הודעות דחופות יקבלו התראה מיידית
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ביטול</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">סמן כדחוף</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="scheduleModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">קביעת שיחה</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label class="form-label">תאריך</label>
+                        <input type="date" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">שעה</label>
+                        <input type="time" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">נושא השיחה</label>
+                        <select class="form-select">
+                            <option>בדיקת התקדמות כללית</option>
+                            <option>התאמת תוכנית תזונה</option>
+                            <option>הכנה לתחרות</option>
+                            <option>פתרון בעיות תזונתיות</option>
+                            <option>אחר</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">הערות נוספות</label>
+                        <textarea class="form-control" rows="3" placeholder="הערות או נושאים ספציפיים לדיון..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ביטול</button>
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal">קבע שיחה</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Notification Toast -->
+<div class="toast-container position-fixed top-0 start-0 p-3">
+    <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <i class="fas fa-comment-dots text-primary me-2"></i>
+            <strong class="me-auto">הודעה חדשה</strong>
+            <small class="text-muted">עכשיו</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body">
+            <!-- Dynamic content -->
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/nutritionist.js') }}"></script>
+<script>
+// Initialize notification system
+if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission();
+}
+
+// Setup toast notifications
+function showToastNotification(title, message) {
+    const toast = document.getElementById('liveToast');
+    const toastBody = toast.querySelector('.toast-body');
+    const toastTitle = toast.querySelector('strong');
+    
+    toastTitle.textContent = title;
+    toastBody.textContent = message;
+    
+    const bsToast = new bootstrap.Toast(toast);
+    bsToast.show();
+}
+
+// Override the notification function to use toast
+window.showNotification = showToastNotification;
+</script>
+{% endblock %}

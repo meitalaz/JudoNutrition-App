@@ -1,0 +1,515 @@
+{% extends "base.html" %}
+
+{% block title %}מעקב משקל ספורטאים - {{ app_name }}{% endblock %}
+
+{% block content %}
+<!-- כפתור זמני לבדיקות - להסיר בגרסה סופית -->
+<button onclick="window.location.href='/'" style="position: absolute; top: 10px; left: 10px; padding: 6px 10px; background: rgba(0,0,0,0.1); border: none; border-radius: 4px; font-size: 12px; cursor: pointer; z-index: 1000;">
+    🧪 בדיקה
+</button>
+
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="h3 fw-bold">
+                <i class="fas fa-chart-line me-2"></i>
+                מעקב משקל ספורטאים
+            </h1>
+            <p class="text-muted">ניתוח מתקדם ומעקב אחר משקל כל הספורטאים</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <div class="btn-group">
+                <button class="btn btn-outline-primary" id="viewModeGrid">
+                    <i class="fas fa-th me-2"></i>
+                    תצוגת רשת
+                </button>
+                <button class="btn btn-primary" id="viewModeList">
+                    <i class="fas fa-list me-2"></i>
+                    רשימה
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alerts and Filters -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <!-- Weight Alerts -->
+            <div class="card border-left-warning mb-3">
+                <div class="card-header bg-warning text-dark">
+                    <h6 class="mb-0">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        התראות משקל
+                    </h6>
+                </div>
+                <div class="card-body p-0">
+                    <div class="alert-item p-3 border-bottom">
+                        <div class="row align-items-center">
+                            <div class="col-md-2">
+                                <span class="badge bg-danger">דחוף</span>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>דני כהן</strong> - ירידה חדה במשקל: 1.8 ק"ג ביום אחד
+                            </div>
+                            <div class="col-md-2 text-muted small">
+                                היום 08:30
+                            </div>
+                            <div class="col-md-2 text-end">
+                                <button class="btn btn-sm btn-outline-primary">פרטים</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="alert-item p-3 border-bottom">
+                        <div class="row align-items-center">
+                            <div class="col-md-2">
+                                <span class="badge bg-warning">זהירות</span>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>שרה לוי</strong> - לא דיווחה משקל 3 ימים
+                            </div>
+                            <div class="col-md-2 text-muted small">
+                                לפני יומיים
+                            </div>
+                            <div class="col-md-2 text-end">
+                                <button class="btn btn-sm btn-outline-secondary">יצור קשר</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <!-- Filters -->
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-filter me-2"></i>
+                        מסננים
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">סטטוס</label>
+                        <select class="form-select form-select-sm">
+                            <option value="">כל הספורטאים</option>
+                            <option value="on-track">במסלול</option>
+                            <option value="needs-attention">צריך תשומת לב</option>
+                            <option value="critical">מצב קריטי</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">קטגוריית משקל</label>
+                        <select class="form-select form-select-sm">
+                            <option value="">כל הקטגוריות</option>
+                            <option value="60">60 ק"ג</option>
+                            <option value="66">66 ק"ג</option>
+                            <option value="73">73 ק"ג</option>
+                            <option value="81">81 ק"ג</option>
+                            <option value="90">90 ק"ג</option>
+                            <option value="100">100 ק"ג</option>
+                            <option value="+100">מעל 100 ק"ג</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">תקופה</label>
+                        <select class="form-select form-select-sm" id="periodFilter">
+                            <option value="7">7 ימים אחרונים</option>
+                            <option value="14" selected>14 ימים אחרונים</option>
+                            <option value="30">30 ימים אחרונים</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Athletes Weight Analysis -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">מעקב משקל ספורטאים</h6>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-secondary">
+                            <i class="fas fa-download me-1"></i>
+                            ייצוא
+                        </button>
+                        <button class="btn btn-outline-primary">
+                            <i class="fas fa-print me-1"></i>
+                            הדפסה
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Athletes List -->
+                    <div id="athletesWeightList">
+                        <!-- Athlete 1 -->
+                        <div class="athlete-weight-card mb-4">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="athlete-info">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <i class="fas fa-user-circle fa-2x text-primary me-2"></i>
+                                            <div>
+                                                <h6 class="mb-0">דני כהן</h6>
+                                                <small class="text-muted">קטגוריה: 66 ק"ג</small>
+                                            </div>
+                                        </div>
+                                        <div class="current-stats">
+                                            <div class="stat-item">
+                                                <span class="stat-label">משקל נוכחי:</span>
+                                                <span class="stat-value text-primary fw-bold">68.2 ק"ג</span>
+                                            </div>
+                                            <div class="stat-item">
+                                                <span class="stat-label">יעד:</span>
+                                                <span class="stat-value">66.0 ק"ג</span>
+                                            </div>
+                                            <div class="stat-item">
+                                                <span class="stat-label">נותר:</span>
+                                                <span class="stat-value text-warning">-2.2 ק"ג</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="weight-chart-container">
+                                        <canvas id="nutritionistChart1" height="150"></canvas>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="athlete-status">
+                                        <div class="status-badge bg-warning text-dark mb-2">
+                                            <i class="fas fa-exclamation-triangle me-1"></i>
+                                            צריך תשומת לב
+                                        </div>
+                                        <div class="trend-indicator mb-2">
+                                            <i class="fas fa-arrow-down text-success me-1"></i>
+                                            <span class="small">מגמת ירידה</span>
+                                        </div>
+                                        <div class="last-update">
+                                            <small class="text-muted">
+                                                <i class="fas fa-clock me-1"></i>
+                                                עודכן: היום 08:30
+                                            </small>
+                                        </div>
+                                        <div class="action-buttons mt-3">
+                                            <button class="btn btn-sm btn-outline-primary mb-1 w-100">
+                                                <i class="fas fa-eye me-1"></i>
+                                                פרטים מלאים
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-info w-100">
+                                                <i class="fas fa-comments me-1"></i>
+                                                שלח הודעה
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Athlete 2 -->
+                        <div class="athlete-weight-card mb-4">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="athlete-info">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <i class="fas fa-user-circle fa-2x text-primary me-2"></i>
+                                            <div>
+                                                <h6 class="mb-0">שרה לוי</h6>
+                                                <small class="text-muted">קטגוריה: 57 ק"ג</small>
+                                            </div>
+                                        </div>
+                                        <div class="current-stats">
+                                            <div class="stat-item">
+                                                <span class="stat-label">משקל נוכחי:</span>
+                                                <span class="stat-value text-primary fw-bold">58.8 ק"ג</span>
+                                            </div>
+                                            <div class="stat-item">
+                                                <span class="stat-label">יעד:</span>
+                                                <span class="stat-value">57.0 ק"ג</span>
+                                            </div>
+                                            <div class="stat-item">
+                                                <span class="stat-label">נותר:</span>
+                                                <span class="stat-value text-success">-1.8 ק"ג</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="weight-chart-container">
+                                        <canvas id="nutritionistChart2" height="150"></canvas>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="athlete-status">
+                                        <div class="status-badge bg-success text-white mb-2">
+                                            <i class="fas fa-check-circle me-1"></i>
+                                            במסלול מצוין
+                                        </div>
+                                        <div class="trend-indicator mb-2">
+                                            <i class="fas fa-arrow-down text-success me-1"></i>
+                                            <span class="small">ירידה יציבה</span>
+                                        </div>
+                                        <div class="last-update">
+                                            <small class="text-muted">
+                                                <i class="fas fa-clock me-1"></i>
+                                                עודכן: אתמול 07:45
+                                            </small>
+                                        </div>
+                                        <div class="action-buttons mt-3">
+                                            <button class="btn btn-sm btn-outline-primary mb-1 w-100">
+                                                <i class="fas fa-eye me-1"></i>
+                                                פרטים מלאים
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-success w-100">
+                                                <i class="fas fa-thumbs-up me-1"></i>
+                                                שלח עידוד
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Athlete 3 -->
+                        <div class="athlete-weight-card mb-4">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="athlete-info">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <i class="fas fa-user-circle fa-2x text-primary me-2"></i>
+                                            <div>
+                                                <h6 class="mb-0">מיכל גרין</h6>
+                                                <small class="text-muted">קטגוריה: 63 ק"ג</small>
+                                            </div>
+                                        </div>
+                                        <div class="current-stats">
+                                            <div class="stat-item">
+                                                <span class="stat-label">משקל נוכחי:</span>
+                                                <span class="stat-value text-primary fw-bold">64.1 ק"ג</span>
+                                            </div>
+                                            <div class="stat-item">
+                                                <span class="stat-label">יעד:</span>
+                                                <span class="stat-value">63.0 ק"ג</span>
+                                            </div>
+                                            <div class="stat-item">
+                                                <span class="stat-label">נותר:</span>
+                                                <span class="stat-value text-info">-1.1 ק"ג</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="weight-chart-container">
+                                        <canvas id="nutritionistChart3" height="150"></canvas>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="athlete-status">
+                                        <div class="status-badge bg-success text-white mb-2">
+                                            <i class="fas fa-check-circle me-1"></i>
+                                            במסלול טוב
+                                        </div>
+                                        <div class="trend-indicator mb-2">
+                                            <i class="fas fa-arrow-down text-success me-1"></i>
+                                            <span class="small">התקדמות טובה</span>
+                                        </div>
+                                        <div class="last-update">
+                                            <small class="text-muted">
+                                                <i class="fas fa-clock me-1"></i>
+                                                עודכן: היום 07:15
+                                            </small>
+                                        </div>
+                                        <div class="action-buttons mt-3">
+                                            <button class="btn btn-sm btn-outline-primary mb-1 w-100">
+                                                <i class="fas fa-eye me-1"></i>
+                                                פרטים מלאים
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-info w-100">
+                                                <i class="fas fa-comments me-1"></i>
+                                                שלח הודעה
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Nutritionist Weight Analysis
+document.addEventListener('DOMContentLoaded', function() {
+    initializeNutritionistWeightAnalysis();
+});
+
+function initializeNutritionistWeightAnalysis() {
+    console.log('Nutritionist weight analysis initialized');
+    createNutritionistCharts();
+    setupFilterHandlers();
+}
+
+function createNutritionistCharts() {
+    // Chart for Athlete 1 (Danny Cohen)
+    createMiniChart('nutritionistChart1', generateAthleteData(70.5, 68.2, 14));
+    
+    // Chart for Athlete 2 (Sarah Levy)
+    createMiniChart('nutritionistChart2', generateAthleteData(61.2, 58.8, 14));
+    
+    // Chart for Athlete 3 (Michal Green)
+    createMiniChart('nutritionistChart3', generateAthleteData(66.8, 64.1, 14));
+}
+
+function createMiniChart(canvasId, data) {
+    const ctx = document.getElementById(canvasId);
+    if (!ctx) return;
+    
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: data.labels,
+            datasets: [{
+                label: 'משקל',
+                data: data.weights,
+                borderColor: '#0077C8',
+                backgroundColor: 'rgba(0, 119, 200, 0.1)',
+                tension: 0.4,
+                fill: true,
+                pointRadius: 2,
+                pointHoverRadius: 4,
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                x: {
+                    display: false
+                },
+                y: {
+                    display: false,
+                    beginAtZero: false
+                }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            }
+        }
+    });
+}
+
+function generateAthleteData(startWeight, endWeight, days) {
+    const labels = [];
+    const weights = [];
+    const weightDiff = (endWeight - startWeight) / (days - 1);
+    
+    for (let i = 0; i < days; i++) {
+        const date = new Date();
+        date.setDate(date.getDate() - (days - 1 - i));
+        labels.push(date.toLocaleDateString('he-IL', { month: 'short', day: 'numeric' }));
+        
+        const weight = startWeight + (weightDiff * i) + (Math.random() - 0.5) * 0.4;
+        weights.push(Math.round(weight * 10) / 10);
+    }
+    
+    return { labels, weights };
+}
+
+function setupFilterHandlers() {
+    document.getElementById('periodFilter').addEventListener('change', function() {
+        const days = parseInt(this.value);
+        // Recreate charts with new period
+        createNutritionistCharts();
+    });
+    
+    // View mode toggles
+    document.getElementById('viewModeList').addEventListener('click', function() {
+        this.classList.add('btn-primary');
+        this.classList.remove('btn-outline-primary');
+        document.getElementById('viewModeGrid').classList.add('btn-outline-primary');
+        document.getElementById('viewModeGrid').classList.remove('btn-primary');
+    });
+    
+    document.getElementById('viewModeGrid').addEventListener('click', function() {
+        this.classList.add('btn-primary');
+        this.classList.remove('btn-outline-primary');
+        document.getElementById('viewModeList').classList.add('btn-outline-primary');
+        document.getElementById('viewModeList').classList.remove('btn-primary');
+    });
+}
+</script>
+
+<style>
+.athlete-weight-card {
+    border: 1px solid #e3e6f0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.athlete-weight-card:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 8px rgba(15, 76, 129, 0.1);
+}
+
+.athlete-info .stat-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: #6b7280;
+}
+
+.stat-value {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.weight-chart-container {
+    height: 150px;
+    position: relative;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.trend-indicator {
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+}
+
+.border-left-warning {
+    border-left: 4px solid #FFC20E !important;
+}
+
+.alert-item:hover {
+    background-color: rgba(255, 194, 14, 0.05);
+}
+</style>
+{% endblock %}

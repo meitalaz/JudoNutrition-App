@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>צ'אט ספורטאי</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>צ'אט עם תזונאי</h2>
+        </div>
+        
+        <div id="chat-box" class="chat-messages">
+            <!-- הודעות יוצגו כאן -->
+        </div>
+        
+        <div class="chat-input-container">
+            <input type="text" id="msg-input" placeholder="הקלד הודעה..." class="message-input">
+            <button onclick="sendMessage()" class="send-button">שלח</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+</body>
+</html> 

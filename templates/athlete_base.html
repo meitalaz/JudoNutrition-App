@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ app_name }}{% endblock %}</title>
+    
+    <!-- Bootstrap RTL CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Hebrew Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/athlete.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dark-theme.css') }}">
+    
+    {% block head %}{% endblock %}
+</head>
+<body class="athlete-layout">
+    <!-- כפתור זמני להחלפת תפקיד - להסיר בגרסה סופית -->
+    <button onclick="window.location.href='/'" style="position: fixed; top: 10px; left: 10px; padding: 8px 12px; background: rgba(255,202,40,0.95); border: 1px solid #FFCA28; border-radius: 6px; font-size: 13px; cursor: pointer; z-index: 9999; color: #333333; font-weight: 600; box-shadow: 0 4px 12px rgba(255,202,40,0.4); transition: all 0.3s ease;">
+        🔄 החלפת תפקיד
+    </button>
+    
+    <!-- Top Header -->
+    <header class="athlete-header">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-8">
+                    <h5 class="mb-0 text-white">
+                        <i class="fas fa-dumbbell me-2"></i>
+                        {{ app_name }}
+                    </h5>
+                </div>
+                <div class="col-4 text-end">
+                    <div class="athlete-actions">
+                        <button class="btn btn-link text-white p-1" data-bs-toggle="dropdown">
+                            <i class="fas fa-bell position-relative">
+                                <span class="notification-badge position-absolute top-0 start-100 translate-middle badge rounded-pill">
+                                    2
+                                </span>
+                            </i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-info-circle me-2"></i>הודעה חדשה מהתזונאית</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-trophy me-2"></i>יעד השבוע הושלם!</a></li>
+                        </ul>
+                        
+                        <button class="btn btn-link text-white p-1 ms-2" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle fa-lg"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>הגדרות</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-question-circle me-2"></i>עזרה</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>יציאה</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="athlete-main">
+        <div class="container-fluid p-3">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            {% block athlete_content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="athlete-bottom-nav">
+        <div class="nav-container">
+            <a href="#" class="nav-item active" data-tab="home" onclick="switchToTab('home')">
+                <i class="fas fa-home"></i>
+                <span>דף הבית</span>
+            </a>
+            <a href="#" class="nav-item" data-tab="weight" onclick="switchToTab('weight')">
+                <i class="fas fa-weight"></i>
+                <span>משקל</span>
+            </a>
+            <a href="#" class="nav-item" data-tab="assessment" onclick="switchToTab('assessment')">
+                <i class="fas fa-clipboard-list"></i>
+                <span>הערכה</span>
+            </a>
+            <a href="#" class="nav-item" data-tab="chat" onclick="switchToTab('chat')">
+                <i class="fas fa-comments position-relative"></i>
+                <span>תקשורת</span>
+                <span class="chat-badge">3</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/athlete.js') }}"></script>
+    
+    {% block athlete_scripts %}{% endblock %}
+</body>
+</html>

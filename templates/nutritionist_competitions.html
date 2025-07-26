@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}ניהול תחרויות - {{ app_name }}{% endblock %}
+
+{% block content %}
+<!-- כפתור זמני לבדיקות - להסיר בגרסה סופית -->
+<button onclick="window.location.href='/'" style="position: absolute; top: 10px; left: 10px; padding: 6px 10px; background: rgba(0,0,0,0.1); border: none; border-radius: 4px; font-size: 12px; cursor: pointer; z-index: 1000;">
+    🧪 בדיקה
+</button>
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h3 fw-bold">
+                <i class="fas fa-trophy me-2"></i>
+                ניהול תחרויות וחיתוך משקל
+            </h1>
+            <p class="text-muted">מעקב תחרויות, תכנון חיתוך משקל ואסטרטגיה תזונתית</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-trophy fa-4x text-muted mb-4"></i>
+                    <h4>ניהול תחרויות מתקדם</h4>
+                    <p class="text-muted mb-4">מערכת ניהול התחרויות תהיה זמינה בקרוב</p>
+                    <p class="small text-muted">כאן ינוהלו תאריכי תחרויות, תכנון חיתוך משקל ואסטרטגיות תזונתיות</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

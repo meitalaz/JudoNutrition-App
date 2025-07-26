@@ -1,0 +1,708 @@
+/* JudoNutrition - Nutritionist Chat Styles */
+
+:root {
+    --primary-color: #0F4C81;
+    --secondary-color: #0077C8;
+    --accent-color: #FFC20E;
+    --light-color: #F4F4F4;
+    --text-color: #333333;
+    --border-color: #e9ecef;
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #17a2b8;
+}
+
+.chat-main-container {
+    height: calc(100vh - 100px);
+    background: var(--light-color);
+}
+
+/* Nutritionist Header */
+.nutritionist-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid var(--accent-color);
+}
+
+.header-info h4 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
+.header-info p {
+    margin: 0.5rem 0 0;
+    opacity: 0.9;
+    font-size: 1rem;
+}
+
+.status-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.status-selector label {
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+}
+
+.status-selector .form-select {
+    min-width: 150px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border-radius: 8px;
+}
+
+.status-selector .form-select:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 0.25rem rgba(255, 194, 14, 0.25);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* Nutritionist Chat Wrapper */
+.nutritionist-chat-wrapper {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: white;
+    position: relative;
+}
+
+/* Athletes Sidebar */
+.athletes-sidebar {
+    height: 100%;
+    background: #f8f9fa;
+    border-left: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-controls {
+    background: white;
+    padding: 1rem !important;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.filter-controls .form-control,
+.filter-controls .form-select {
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.filter-controls .form-control:focus,
+.filter-controls .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(15, 76, 129, 0.1);
+}
+
+/* Athletes List */
+.athletes-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0;
+}
+
+.athlete-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: all 0.2s;
+    background: white;
+    margin-bottom: 1px;
+    position: relative;
+}
+
+.athlete-item:hover {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    transform: translateX(-3px);
+}
+
+.athlete-item.selected {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border-left: 4px solid var(--accent-color);
+}
+
+.athlete-item.selected .text-muted {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.athlete-item.has-urgent {
+    border-left: 4px solid var(--danger-color);
+    background: linear-gradient(135deg, #fff5f5, #ffeaea);
+}
+
+.athlete-item.has-urgent:hover {
+    background: linear-gradient(135deg, #fee, #fdd);
+}
+
+/* Athlete Avatar */
+.athlete-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-left: 1rem;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.athlete-item.selected .athlete-avatar {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+.urgent-indicator {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 16px;
+    height: 16px;
+    background: var(--danger-color);
+    border: 2px solid white;
+    border-radius: 50%;
+    animation: urgentPulse 1.5s infinite;
+}
+
+@keyframes urgentPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.2); opacity: 0.8; }
+}
+
+/* Athlete Info */
+.athlete-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.athlete-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem;
+}
+
+.athlete-name {
+    font-weight: 600;
+    font-size: 1rem;
+    margin: 0;
+    color: var(--text-color);
+}
+
+.athlete-item.selected .athlete-name {
+    color: white;
+}
+
+.unread-badge {
+    background: var(--danger-color);
+    color: white;
+    border-radius: 12px;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    min-width: 20px;
+    text-align: center;
+}
+
+.athlete-details {
+    margin-bottom: 0.5rem;
+}
+
+.last-message {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+}
+
+.message-time {
+    color: #6c757d;
+    font-size: 0.75rem;
+    white-space: nowrap;
+}
+
+/* Chat Area */
+.chat-area {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: white;
+}
+
+.welcome-screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+}
+
+.welcome-screen i {
+    color: #6c757d;
+    margin-bottom: 2rem;
+}
+
+/* Chat Header for Individual Athlete */
+.chat-header-athlete {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid var(--accent-color);
+}
+
+.athlete-chat-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.athlete-avatar-large {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 1.5rem;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.athlete-details-extended h5 {
+    margin: 0 0 0.5rem;
+    font-weight: 700;
+}
+
+.athlete-meta {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.athlete-meta .badge {
+    font-size: 0.8rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 12px;
+}
+
+.chat-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.chat-actions .btn {
+    border-color: rgba(255, 255, 255, 0.3);
+    color: white;
+    font-weight: 600;
+    border-radius: 8px;
+}
+
+.chat-actions .btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-1px);
+}
+
+/* Messages Container */
+.messages-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Messages */
+.message {
+    display: flex;
+    margin-bottom: 1rem;
+    animation: messageAppear 0.3s ease-out;
+}
+
+@keyframes messageAppear {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.nutritionist-msg {
+    justify-content: flex-end;
+}
+
+.athlete-msg {
+    justify-content: flex-start;
+}
+
+.message-bubble {
+    max-width: 70%;
+    min-width: 120px;
+    border-radius: 18px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+    position: relative;
+    background: white;
+}
+
+.nutritionist-msg .message-bubble {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border-bottom-right-radius: 8px;
+}
+
+.nutritionist-msg .message-bubble::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: -8px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 8px 0 0 8px;
+    border-color: var(--primary-color) transparent transparent transparent;
+}
+
+.athlete-msg .message-bubble {
+    background: linear-gradient(135deg, #ffffff, #f8f9fa);
+    border: 1px solid #e9ecef;
+    border-bottom-left-radius: 8px;
+}
+
+.athlete-msg .message-bubble::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: -8px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 8px 8px 0;
+    border-color: transparent #ffffff transparent transparent;
+}
+
+.urgent-message .message-bubble {
+    border-left: 4px solid var(--danger-color);
+    box-shadow: 0 3px 15px rgba(220, 53, 69, 0.2);
+}
+
+.urgent-badge {
+    background: linear-gradient(135deg, var(--danger-color), #c82333);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    border-radius: 12px 12px 0 0;
+    text-align: center;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.message-content {
+    padding: 1rem 1.25rem 0.75rem;
+}
+
+.message-content p {
+    margin: 0;
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+
+.message-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1.25rem 1rem;
+    font-size: 0.8rem;
+}
+
+.nutritionist-msg .message-footer {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.athlete-msg .message-footer {
+    color: #6c757d;
+}
+
+.message-status {
+    color: var(--success-color);
+    font-weight: 600;
+}
+
+.unread-indicator {
+    background: var(--accent-color);
+    color: var(--text-color);
+    padding: 0.2rem 0.5rem;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+/* Typing Indicator */
+.typing-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+    background: rgba(15, 76, 129, 0.05);
+    border-top: 1px solid var(--border-color);
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.typing-dots {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.typing-dots span {
+    width: 8px;
+    height: 8px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    opacity: 0.4;
+    animation: typingPulse 1.4s ease-in-out infinite;
+}
+
+.typing-dots span:nth-child(1) { animation-delay: 0s; }
+.typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typingPulse {
+    0%, 60%, 100% {
+        opacity: 0.4;
+        transform: scale(1);
+    }
+    30% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+}
+
+/* Message Input Area */
+.message-input-area {
+    background: white;
+    padding: 1.5rem 2rem 2rem;
+    border-top: 2px solid var(--border-color);
+}
+
+.templates-row {
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.template-btn {
+    border-radius: 20px;
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.template-btn:hover {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+    transform: translateY(-1px);
+}
+
+.message-input-area .input-group {
+    border-radius: 25px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.message-input-area .form-control {
+    border: 2px solid var(--border-color);
+    border-radius: 0;
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+    border-left: none;
+    border-right: none;
+}
+
+.message-input-area .form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: none;
+}
+
+.message-input-area .btn {
+    border-radius: 0;
+    border: 2px solid var(--border-color);
+    padding: 1rem 1.25rem;
+}
+
+.message-input-area .btn:first-child {
+    border-radius: 25px 0 0 25px;
+    border-right: 1px solid var(--border-color);
+}
+
+.message-input-area .btn:last-child {
+    border-radius: 0 25px 25px 0;
+    border-left: 1px solid var(--border-color);
+}
+
+.message-input-area .btn-outline-secondary {
+    background: #f8f9fa;
+    border-color: var(--border-color);
+    color: #6c757d;
+}
+
+.message-input-area .btn-outline-secondary:hover {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.message-input-area .btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-color: var(--primary-color);
+}
+
+.message-input-area .btn-primary:hover {
+    background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+    transform: scale(1.02);
+}
+
+/* Scrollbar Styling */
+.messages-container::-webkit-scrollbar,
+.athletes-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.messages-container::-webkit-scrollbar-track,
+.athletes-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.messages-container::-webkit-scrollbar-thumb,
+.athletes-list::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 10px;
+}
+
+.messages-container::-webkit-scrollbar-thumb:hover,
+.athletes-list::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .nutritionist-header {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .status-controls {
+        justify-content: center;
+    }
+    
+    .chat-header-athlete {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .athlete-meta {
+        justify-content: center;
+    }
+    
+    .chat-actions {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .athlete-item {
+        padding: 0.75rem 1rem;
+    }
+    
+    .athlete-avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    
+    .message-bubble {
+        max-width: 85%;
+    }
+    
+    .message-input-area {
+        padding: 1rem;
+    }
+    
+    .templates-row {
+        justify-content: center;
+    }
+    
+    .template-btn {
+        font-size: 0.8rem;
+        padding: 0.3rem 0.6rem;
+    }
+}
+
+/* Dark mode support (if needed later) */
+@media (prefers-color-scheme: dark) {
+    .chat-main-container {
+        background: #1a1a1a;
+    }
+    
+    .athletes-sidebar {
+        background: #2d2d2d;
+    }
+    
+    .athlete-item {
+        background: #333;
+        color: #fff;
+        border-color: #444;
+    }
+    
+    .messages-container {
+        background: #1a1a1a;
+    }
+}
+
+/* Animation for smooth transitions */
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
