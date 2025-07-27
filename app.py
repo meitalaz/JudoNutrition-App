@@ -287,7 +287,7 @@ def send_message_api():
         
         # שמור את ההודעה במסד הנתונים
         from database import add_message
-        add_message(sender_id, receiver_id, content)
+        add_message(sender_id, receiver_id, content, None)  # role will be fetched automatically
         
         conn.close()
         
@@ -334,8 +334,11 @@ def get_messages_api():
                 'id': msg['id'],
                 'sender_id': msg['sender_id'],
                 'receiver_id': msg['receiver_id'],
-                'content': msg['content'],
+                'role': msg['role'],
+                'message': msg['message'],
                 'timestamp': msg['timestamp'],
+                'message_type': msg['message_type'],
+                'context': msg['context'],
                 'is_read': bool(msg['is_read'])
             })
         

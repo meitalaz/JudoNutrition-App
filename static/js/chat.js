@@ -29,7 +29,7 @@ function displayMessages(messages) {
         
         const contentDiv = document.createElement('div');
         contentDiv.className = 'message-content';
-        contentDiv.textContent = message.content;
+        contentDiv.textContent = message.message;
         
         const timeDiv = document.createElement('div');
         timeDiv.className = 'message-time';

@@ -29,10 +29,15 @@ def init_db():
         CREATE TABLE IF NOT EXISTS messages (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             sender_id INTEGER NOT NULL,
-            receiver_id INTEGER NOT NULL,
-            content TEXT NOT NULL,
-            timestamp TEXT,
-            is_read BOOLEAN DEFAULT 0
+            receiver_id INTEGER,
+            role TEXT NOT NULL,
+            message TEXT NOT NULL,
+            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            message_type TEXT DEFAULT 'text',
+            context TEXT,
+            is_read BOOLEAN DEFAULT 0,
+            FOREIGN KEY (sender_id) REFERENCES users(id),
+            FOREIGN KEY (receiver_id) REFERENCES users(id)
         )
     ''')
     
@@ -40,15 +45,21 @@ def init_db():
     conn.close()
     print("✅ מסד הנתונים נוצר בהצלחה!")
 
-def add_message(sender_id, receiver_id, content):
+def add_message(sender_id, receiver_id, message, role, message_type='text', context=None):
     """הוספת הודעה חדשה"""
     conn = get_db_connection()
     cursor = conn.cursor()
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    # קבל את התפקיד של השולח
+    if role is None:
+        cursor.execute('SELECT role FROM users WHERE id = ?', (sender_id,))
+        user = cursor.fetchone()
+        role = user['role'] if user else 'athlete'
+    
     cursor.execute('''
-        INSERT INTO messages (sender_id, receiver_id, content, timestamp)
-        VALUES (?, ?, ?, ?)
-    ''', (sender_id, receiver_id, content, timestamp))
+        INSERT INTO messages (sender_id, receiver_id, role, message, message_type, context)
+        VALUES (?, ?, ?, ?, ?, ?)
+    ''', (sender_id, receiver_id, role, message, message_type, context))
     conn.commit()
     conn.close()
 
@@ -77,4 +88,30 @@ def mark_messages_as_read(receiver_id, sender_id):
         WHERE receiver_id = ? AND sender_id = ? AND is_read = 0
     ''', (receiver_id, sender_id))
     conn.commit()
-    conn.close() 
+    conn.close()
+
+def get_unread_messages_count(user_id):
+    """קבלת מספר הודעות שלא נקראו למשתמש"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT COUNT(*) as count FROM messages 
+        WHERE receiver_id = ? AND is_read = 0
+    ''', (user_id,))
+    result = cursor.fetchone()
+    conn.close()
+    return result['count'] if result else 0
+
+def get_messages_by_role(role, limit=50):
+    """קבלת הודעות לפי תפקיד"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT * FROM messages 
+        WHERE role = ?
+        ORDER BY timestamp DESC
+        LIMIT ?
+    ''', (role, limit))
+    messages = cursor.fetchall()
+    conn.close()
+    return messages 
